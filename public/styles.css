@@ -1,3 +1,96 @@
-h1 {
-    color: hotpink;
+body {
+  margin: 0 15%;
+  font-family: 'Verdana';
+  font-size: 13.3333px;
+  color: #000;
 }
+
+/*Top Navigation Styles*/
+
+.top-nav {
+  background-color: #ff6600;
+  padding: 0px;
+  line-height: 26px;
+}
+.top-nav ul {
+  padding: 0;
+  margin: 5px 0 0 0;
+  -webkit-padding-start: 0px;
+}
+
+.title {
+  font-weight: bold;
+  margin: 0px;
+}
+
+.logo {
+  padding: 0px;
+  margin: 3px;
+  float: left;
+}
+
+.logo > img {
+  border-style: solid;
+  border-width: 1px;
+  border-color: #fff;
+  color: #fff;
+
+}
+
+.nav > li {
+  display: inline-block;
+  list-style: none;
+  line-height: 26px
+
+}
+
+#login {
+  float: right;
+  padding-right: 5px;
+  margin: 0px;
+
+}
+
+/*Styling for Posts in Main Body of Page*/
+
+.content-div{
+  background-color: #f6f6ef
+
+}
+
+
+.post-list ol {
+  color: #828282;
+  margin: 0 0 10px 0;
+  padding: 0 0 0 20px;
+  list-style: none;
+}
+
+.post-title {
+  color: #000;
+  display: inline;
+  text-decoration: none;
+}
+
+.arrow {
+  margin: 3px 2px 1px 2px;
+  height: 10px;
+  width: 10px;
+
+}
+
+.comments {
+  font-size: 7pt;
+  margin-left: 20px;
+  margin-top: 0px;
+}
+
+.end-of-posts {
+  color: #ff6600
+
+}
+
+
+/*Footer and Search Styles*/
+
+
