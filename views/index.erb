@@ -1,0 +1,12 @@
+<div class="post-list">
+  <ol>
+    <%@articles.each do |article|%>
+    <li><img class="arrow" src="https://news.ycombinator.com/grayarrow2x.gif">
+      <a href="<%=article[:url]%>" target="_blank"><%=article[:title]%></a>
+      <p class="comments"><%=article[:description]%></p>
+    </li>
+    <%end%>
+  </ol>
+  <a href="#">More</a>
+  <hr class="end-of-posts">
+</div>

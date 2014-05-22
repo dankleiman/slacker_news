@@ -1,12 +1,27 @@
-   <div class="content-div">
-      <div class="post-list">
-        <ol>
-          <li>1.<img class="arrow" src="https://news.ycombinator.com/grayarrow2x.gif"><a class="post-title" href="https://www.firebase.com/blog/2013-08-15-firebase-leaves-beta-today.html">Firebase Leaves Beta Today</a> (firebase.com)
-          <p class="comments">63 points by lyime 56 minutes ago | 17 comments</p></li>
-        </ol>
-        <a href="#">More</a>
-        <hr class="end-of-posts">
-      </div>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Slacker News</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <div class="top-nav">
+      <ul class="nav">
+         <li class="logo"><img  src="https://news.ycombinator.com/y18.gif"></li>
+        <li class="title">Slacker News</li>
+        <li>new |</li>
+        <li>comments |</li>
+        <li>ask  |</li>
+        <li>jobs |</li>
+        <li><a href="/new">submit</a></li>
+        <li id="login"><a href="#">login</a></li>
+      </ul>
+    </div>
+  <div class="content-div">
+
+  <%= yield %>
+
 
       <div class="footer-nav">
         <ul class="nav">
@@ -34,3 +49,5 @@
       </div>
     </div>
 
+  </body>
+</html>
