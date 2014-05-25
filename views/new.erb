@@ -1,14 +1,27 @@
 <h1>Submit a new article to Slacker News</h1>
+<div class="error">
+<%if @errors.empty? == false %>
+  <% @errors.each do |message| %>
+    <p><%=message%></p>
+  <%end%>
+<%end%>
+</div>
 
-<form action="/" method="post">
-  <label for="title">Title: </label>
-  <input type="text" name="title" id="title"/>
+<form action="/new" method="post">
+  <div>
+    <label for="title">Title: </label>
+    <input type="text" name="title" id="title" placeholder="Enter a title for the article." value="<%=params[:title]%>"/>
+  </div>
 
-  <label for="url">url: </label>
-  <input type="url" name="url" id="url"/>
+  <div>
+    <label for="description">Description: </label>
+    <input type="text" name="description" id="description" placeholder="Enter a brief description of the article." value="<%=params[:description]%>"/>
+  </div>
 
-  <label for="description">Description: </label>
-  <input type="text" name="description" id="description"/>
+  <div>
+    <label for="url">URL: </label>
+    <input type="text" name="url" id="url" placeholder="Enter a valid URL." value="<%=params[:url]%>"/>
+  </div>
 
-  <input type="submit" value="Submit" />
+  <input type="submit" value="Submit"/>
 </form>

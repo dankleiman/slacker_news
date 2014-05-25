@@ -90,6 +90,11 @@ body {
 
 }
 
+.error {
+  color: #ff0000;
+  font-weight: bold;
+}
+
 
 /*Footer and Search Styles*/
 
