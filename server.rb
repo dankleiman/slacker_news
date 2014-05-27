@@ -2,14 +2,44 @@ require 'sinatra'
 require 'csv'
 require 'pry'
 require 'uri'
+require 'redis'
+require 'json'
 
-def get_articles
-  articles = []
-  CSV.foreach('articles.csv', headers: true, header_converters: :symbol) do |article|
-      articles << article.to_hash
+def get_connection
+  if ENV.has_key?("REDISCLOUD_URL")
+    Redis.new(url: ENV["REDISCLOUD_URL"])
+  else
+    Redis.new
   end
+end
+
+def find_articles
+  redis = get_connection
+  serialized_articles = redis.lrange("slacker:articles", 0, -1)
+
+  articles = []
+
+  serialized_articles.each do |article|
+    articles << JSON.parse(article, symbolize_names: true)
+  end
+
   articles
 end
+
+def save_article(url, title, description)
+  article = { url: url, title: title, description: description }
+
+  redis = get_connection
+  redis.rpush("slacker:articles", article.to_json)
+end
+
+# def get_articles
+#   articles = []
+#   CSV.foreach('articles.csv', headers: true, header_converters: :symbol) do |article|
+#       articles << article.to_hash
+#   end
+#   articles
+# end
 
 def form_errors(title, url, description)
   errors = []
@@ -27,7 +57,7 @@ def form_errors(title, url, description)
   if (url =~ URI::regexp) != 0
       errors << "Please enter a valid url."
   end
-  existing_articles = get_articles
+  existing_articles = find_articles
   # binding.pry
   existing_articles.each do |old_article|
     if old_article[:url] == (url)
@@ -39,7 +69,7 @@ def form_errors(title, url, description)
 end
 
 get '/' do
-  @articles = get_articles
+  @articles = find_articles
   erb :index
 end
 
