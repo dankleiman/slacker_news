@@ -88,7 +88,7 @@ post '/new' do
   # binding.pry
   if @errors.empty? == true
     # binding.pry
-      CSV.open("articles.csv", "a") { |csv| csv << [title, url, description]  }
+      save_article(url, title, description)
       redirect '/'
   else
     erb :new
