@@ -10,6 +10,15 @@
     <%end%>
   </ol>
 
+<div class="error">
+<% if @errors.empty? == false %>
+  <% @errors.each do |message| %>
+    <p><%=message%></p>
+  <%end%>
+<%end%>
+</div>
+
+
 <form action="/articles/<%= @id %>/comments" method="post">
 
   <div>

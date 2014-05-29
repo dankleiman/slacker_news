@@ -97,13 +97,26 @@ def form_errors(title, url, description)
   errors
 end
 
+def comment_errors(comment, username)
+ errors = []
+
+  if comment == ""
+      errors << "Please enter a comment."
+  end
+  if username == ""
+      errors << "Please enter a username."
+  end
+
+  errors
+end
+
+
 #########################
 # ROUTES
 #########################
 
 get '/articles' do
   @articles = find_articles
-  binding.pry
   erb :'articles/index'
 end
 
@@ -118,9 +131,8 @@ post '/articles/new' do
   description = params[:description]
   username = params[:username]
   @errors = []
-  #validate form entries
   @errors = form_errors(title, url, description)
-  if @errors.empty? == true
+  if @errors.empty?
       save_article(url, title, description, username)
       redirect '/articles'
   else
@@ -131,16 +143,23 @@ end
 
 post '/articles/:article_id/comments' do
   article_id = params[:article_id]
-  binding.pry
   username = params[:username]
   comment = params[:comment]
-
-  save_comment(article_id, username, comment)
-  redirect "/articles/#{article_id}/comments"
+  #when we implement validation, and the comment is empty, it sends to show page without other comment data
+  @errors = []
+  @errors = comment_errors(comment, username)
+  binding.pry
+  if @errors.empty?
+    save_comment(article_id, username, comment)
+    redirect "/articles/#{article_id}/comments"
+  else
+    erb :'comments/show'
+  end
 end
 
 get '/articles/:article_id/comments' do
   @id = params[:article_id]
+  @errors = []
   @comments = get_comments(@id)
   erb :'comments/show'
 end
