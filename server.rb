@@ -51,6 +51,15 @@ def check_url(url)
   end
 end
 
+def get_comments(id)
+  db_connection do |conn|
+    conn.exec('SELECT articles.link, articles.title, comments.username, comments.submitted_at, comments.comment
+      FROM articles
+      JOIN comments ON articles.id = comments.article_id WHERE articles.id = $1', [id])
+  end
+end
+
+
 #########################
 # OTHER METHODS
 #########################
@@ -110,5 +119,11 @@ post '/articles/new' do
     erb :'/articles/new'
   end
 
+end
+
+get '/articles/:article_id/comments' do
+  id = params[:article_id]
+  @comments = get_comments(id)
+  erb :'articles/comments/show'
 end
 
