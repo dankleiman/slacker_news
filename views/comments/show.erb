@@ -1,0 +1,27 @@
+<h1>Comments for <%=@comments[0]["title"]%></h1>
+
+
+  <ol>
+    <%@comments.each do |comment|%>
+    <li>
+      <p><%=comment["comment"]%></p>
+      <p class="comments">by <%=comment["username"]%> on <%=comment["submitted_at"]%></p>
+    </li>
+    <%end%>
+  </ol>
+
+<form action="/articles/<%= @id %>/comments" method="post">
+
+  <div>
+    <label for="comment">Comment: </label>
+    <input type="text" name="comment" id="comment" placeholder="Enter a brief comment about the article." value="<%=params[:comment]%>"/>
+  </div>
+  <div>
+    <label for="username">Username: </label>
+    <input type="text" name="username" id="username" placeholder="Enter username." value="<%=params[:username]%>"/>
+  </div>
+
+  <input type="submit" value="Submit"/>
+</form>
+
+<hr class="end-of-posts">

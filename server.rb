@@ -142,6 +142,6 @@ end
 get '/articles/:article_id/comments' do
   @id = params[:article_id]
   @comments = get_comments(@id)
-  erb :'articles/comments/show'
+  erb :'comments/show'
 end
 
