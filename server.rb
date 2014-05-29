@@ -1,43 +1,52 @@
 require 'sinatra'
 require 'uri'
-require 'redis'
-require 'json'
+require 'pg'
 
-def get_connection
-  if ENV.has_key?("REDISCLOUD_URL")
-    Redis.new(url: ENV["REDISCLOUD_URL"])
-  else
-    Redis.new
+
+
+#########################
+# POSTGRES METHODS
+#########################
+
+configure :production do
+  set :db_connection_info, {
+    host: ENV['DB_HOST'],
+    dbname:ENV['DB_DATABASE'],
+    user:ENV['DB_USER'],
+    password:ENV['DB_PASSWORD']
+  }
+
+end
+
+configure :development do
+  set :db_connection_info, {dbname: 'slacker_news'}
+end
+
+def db_connection
+  begin
+    connection = PG::Connection.open(settings.db_connection_info)
+    yield(connection)
+  ensure
+    connection.close
   end
 end
 
 def find_articles
-  redis = get_connection
-  serialized_articles = redis.lrange("slacker:articles", 0, -1)
-
-  articles = []
-
-  serialized_articles.each do |article|
-    articles << JSON.parse(article, symbolize_names: true)
+  db_connection do |conn|
+    conn.exec("SELECT * FROM articles")
   end
-
-  articles
 end
 
-def save_article(url, title, description)
-  article = { url: url, title: title, description: description }
-
-  redis = get_connection
-  redis.rpush("slacker:articles", article.to_json)
+def save_article(url, title, description, username)
+  db_connection do |conn|
+    conn.exec("INSERT INTO articles (url, title, description, username, submitted_at)
+    VALUES ($1, $2, $3, $4, NOW());", [url, title, description, username])
+  end
 end
 
-# def get_articles
-#   articles = []
-#   CSV.foreach('articles.csv', headers: true, header_converters: :symbol) do |article|
-#       articles << article.to_hash
-#   end
-#   articles
-# end
+#########################
+# OTHER METHODS
+#########################
 
 def form_errors(title, url, description)
   errors = []
@@ -66,33 +75,36 @@ def form_errors(title, url, description)
   errors
 end
 
-get '/' do
+#########################
+# ROUTES
+#########################
+
+get '/articles' do
   @articles = find_articles
-  erb :index
+  erb :'articles/index'
 end
 
-get '/new' do
+get '/articles/new' do
   @errors = []
-  erb :new
+  erb :'articles/new'
 end
 
-post '/new' do
+post '/articles/new' do
   title = params[:title]
   url = params[:url]
   description = params[:description]
+  username = params[:username]
   @errors = []
   #validate form entries
   @errors = form_errors(title, url, description)
   # binding.pry
   if @errors.empty? == true
     # binding.pry
-      save_article(url, title, description)
-      redirect '/'
+      save_article(url, title, description, username)
+      redirect '/articles'
   else
-    erb :new
+    erb :'articles/new'
   end
 
 end
 
- # query = params.map{|key, value| "#{key}=#{value}"}.join("&")
- #      redirect "/new?#{query}"
