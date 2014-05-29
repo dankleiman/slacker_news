@@ -40,20 +40,28 @@ end
 
 def save_article(url, title, description, username)
   db_connection do |conn|
-    conn.exec("INSERT INTO articles (link, title, description, username, submitted_at)
+    conn.exec_params("INSERT INTO articles (link, title, description, username, submitted_at)
     VALUES ($1, $2, $3, $4, NOW());", [url, title, description, username])
   end
 end
 
+def save_comment(article_id, username, comment)
+  db_connection do |conn|
+    conn.exec_params("INSERT INTO comments (article_id, username, comment, submitted_at)
+    VALUES ($1, $2, $3, NOW());", [article_id, username, comment])
+  end
+end
+
+
 def check_url(url)
   db_connection do |conn|
-    conn.exec("SELECT * FROM articles WHERE link = $1", [url])
+    conn.exec_params("SELECT * FROM articles WHERE link = $1", [url])
   end
 end
 
 def get_comments(id)
   db_connection do |conn|
-    conn.exec('SELECT articles.link, articles.title, comments.username, comments.submitted_at, comments.comment
+    conn.exec_params('SELECT articles.link, articles.title, comments.username, comments.submitted_at, comments.comment
       FROM articles
       JOIN comments ON articles.id = comments.article_id WHERE articles.id = $1', [id])
   end
@@ -121,9 +129,19 @@ post '/articles/new' do
 
 end
 
+post '/articles/:article_id/comments' do
+  article_id = params[:article_id]
+  binding.pry
+  username = params[:username]
+  comment = params[:comment]
+
+  save_comment(article_id, username, comment)
+  redirect "/articles/#{article_id}/comments"
+end
+
 get '/articles/:article_id/comments' do
-  id = params[:article_id]
-  @comments = get_comments(id)
+  @id = params[:article_id]
+  @comments = get_comments(@id)
   erb :'articles/comments/show'
 end
 
