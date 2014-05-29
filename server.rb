@@ -1,6 +1,7 @@
 require 'sinatra'
 require 'uri'
 require 'pg'
+require 'pry'
 
 
 
@@ -39,8 +40,14 @@ end
 
 def save_article(url, title, description, username)
   db_connection do |conn|
-    conn.exec("INSERT INTO articles (url, title, description, username, submitted_at)
+    conn.exec("INSERT INTO articles (link, title, description, username, submitted_at)
     VALUES ($1, $2, $3, $4, NOW());", [url, title, description, username])
+  end
+end
+
+def check_url(url)
+  db_connection do |conn|
+    conn.exec("SELECT * FROM articles WHERE link = $1", [url])
   end
 end
 
@@ -50,6 +57,7 @@ end
 
 def form_errors(title, url, description)
   errors = []
+
   if title == ""
       errors << "Please enter a title."
   end
@@ -64,12 +72,9 @@ def form_errors(title, url, description)
   if (url =~ URI::regexp) != 0
       errors << "Please enter a valid url."
   end
-  existing_articles = find_articles
-  # binding.pry
-  existing_articles.each do |old_article|
-    if old_article[:url] == (url)
-      errors << "This article has already been submitted. Please submit something else."
-    end
+  #check for duplicate submissions
+  if !check_url(url).to_a.empty?
+    errors << "This article has already been submitted."
   end
 
   errors
@@ -81,6 +86,7 @@ end
 
 get '/articles' do
   @articles = find_articles
+  binding.pry
   erb :'articles/index'
 end
 
@@ -97,13 +103,11 @@ post '/articles/new' do
   @errors = []
   #validate form entries
   @errors = form_errors(title, url, description)
-  # binding.pry
   if @errors.empty? == true
-    # binding.pry
       save_article(url, title, description, username)
       redirect '/articles'
   else
-    erb :'articles/new'
+    erb :'/articles/new'
   end
 
 end
