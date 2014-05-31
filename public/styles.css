@@ -58,6 +58,10 @@ body {
 
 }
 
+h1 {
+  margin: 0 0 15px 25px;
+  padding-top: 10px;
+}
 
 .post-list ol {
   color: #828282;
@@ -95,6 +99,10 @@ body {
   font-weight: bold;
 }
 
+form {
+
+  margin-left: 25px;
+}
 
 /*Footer and Search Styles*/
 

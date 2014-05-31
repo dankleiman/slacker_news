@@ -115,6 +115,10 @@ end
 # ROUTES
 #########################
 
+get '/' do
+  redirect '/articles'
+end
+
 get '/articles' do
   @articles = find_articles
   erb :'articles/index'
